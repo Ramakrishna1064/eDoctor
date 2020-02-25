@@ -1,0 +1,52 @@
+#eDoctor App Titles and Messages
+
+appname=eDoctor App
+
+#Login Messages
+
+login.success=User Login Successfully
+login.email.password.error=Invalid UserName or Password
+login.email.notverified=Registered E-mailId is not verified. Please verify your Email to activate your account.
+
+#Registration Messages
+registration.email.exists=Email already registered. Please choose another Email.
+registration.email.notexists=Email Does not Exists
+registration.success.message=Registration is Successful. Verification link has sent to Registered Email.
+registration.error.message=Registration Failure
+
+resend.verification.link.success=Verification link successfully sent to Registered Email.
+
+#OTP Messages
+otp.send.success.message=OTP sent to your registered Email
+email.not.verified=Email Id not verified
+
+#Forgot Password
+forgot.password.reset.success=You're Password has reset Successfully
+forgot.password.reset.error=Failure to reset Your Password
+
+#Email Templates title and Subject
+registration.email.subject=eDoctor App: Registration Successful
+registration.email.resend.verification=eDoctor App: Verification Link
+
+
+
+
+###################### Common Messages for Images and SMTP Mail ##########################
+imagePath=d:/MediguruApp/images/
+imagePath1=/home/krishna/MediguruApp/images/
+
+imageUrlPath=http://192.168.1.119:8081/mediguru/medi/MediguruImages/getImage?fileName=
+imageUrlPath1=http://ilovesalesevents.in:8080/mediguru/medi/MediguruImages/getImage?fileName=
+
+smtphost=smtp.gmail.com
+from=ensisinfo99@gmail.com
+password=System@1
+fromname=eDoctor App
+
+dlink1=http://ilovesalesevents.in:8080/mediguru/medi/Emailverify/verify
+dlink=http://192.168.1.119:8081/mediguru/medi/Emailverify/verify
+
+mail.host.mailid=ensisinfo99@gmail.com
+
+forgot.password.otp.body=Your OTP for Forgot Password is: {0} 
+forgot.password.otp.subject=eDoctor App: OTP for Forgot Password 

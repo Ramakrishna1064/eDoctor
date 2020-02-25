@@ -1,0 +1,235 @@
+/**
+ * 
+ */
+package com.ensis.mediguru.dao.patient;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.ensis.mediguru.dao.common.HibernateUtil;
+import com.ensis.mediguru.dto.Treatment;
+import com.ensis.mediguru.dto.TreatmentImages;
+import com.ensis.mediguru.dto.TreatmentQuestion;
+import com.ensis.mediguru.service.common.CommonService;
+import com.ensis.mediguru.utils.MessageResources;
+
+/**
+ * @author ensis
+ *
+ */
+@Repository
+public class PostQuestionToPhysicianDAO extends MessageResources {
+
+	@Autowired
+	HibernateUtil hibernateUtil;
+
+	@Autowired
+	private SessionFactory sessionFactory;
+
+	@Autowired
+	CommonService commonService;
+
+	public void setHibernateUtil(HibernateUtil hibernateUtil) {
+		this.hibernateUtil = hibernateUtil;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	public void setCommonService(CommonService commonService) {
+		this.commonService = commonService;
+	}
+
+	/**
+	 * 
+	 * @param treatmet
+	 * @return
+	 */
+	public int treatment(Treatment treatmet) {
+		int treatmentid = 0;
+		try {
+
+			Session session = sessionFactory.getCurrentSession();
+			Object obj = session.save(treatmet).getClass().getName();
+			// hibernateUtil.create(treatmet)
+			session.flush();
+			session.clear();
+
+			if (obj != null) {
+
+				treatmentid = (Integer) sessionFactory.getCurrentSession()
+						.createCriteria(Treatment.class)
+						.setProjection(Projections.max("treatmentid"))
+						.uniqueResult();
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return treatmentid;
+	}
+
+	/**
+	 * 
+	 * @param treatmentQuestion
+	 * @return
+	 */
+	public int newTreatQuestion(TreatmentQuestion treatmentQuestion) {
+
+		int treatmentquestionid = 0;
+		try {
+
+			hibernateUtil.create(treatmentQuestion).getClass().getName();
+			Session session = sessionFactory.getCurrentSession();
+			treatmentquestionid = (Integer) session
+					.createCriteria(TreatmentQuestion.class)
+					.setProjection(Projections.max("treatmentquestionid"))
+					.uniqueResult();
+
+			session.flush();
+			session.clear();
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return treatmentquestionid;
+	}
+
+	/**
+	 * 
+	 * @param file
+	 * @param treatmentimages
+	 * @return
+	 */
+	public int saveTreatmentImages(MultipartFile file,
+			TreatmentImages treatmentimages) {
+		int imageid = 0;
+		if (!file.isEmpty()) {
+			try {
+
+				System.out.println(file.getOriginalFilename());
+				String fileName = commonService.saveImgaeFileIntoDisk(file);
+				if (fileName != null) {
+
+					treatmentimages.setImage(fileName);
+					Session session = sessionFactory.getCurrentSession();
+					Object obj = session.save(treatmentimages);
+					session.flush();
+					session.clear();
+					if (obj != null) {
+
+						Session sessionFac = sessionFactory.getCurrentSession();
+						imageid = (Integer) sessionFac
+								.createCriteria(TreatmentImages.class)
+								.setProjection(Projections.max("imageid"))
+								.uniqueResult();
+						sessionFac.flush();
+						sessionFac.clear();
+					}
+				}
+				return imageid;
+			} catch (Exception e) {
+				e.printStackTrace();
+
+				return 0;
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * 
+	 * @param file
+	 * @param treatmentimages
+	 * @return
+	 */
+	public int saveTreatmentAudioFile(MultipartFile file,
+			TreatmentImages treatmentimages) {
+		int imageid = 0;
+		if (!file.isEmpty()) {
+			try {
+
+				System.out.println(file.getOriginalFilename());
+				String fileName = commonService.saveAudioFileIntoDisk(file);
+				if (fileName != null) {
+
+					treatmentimages.setImage(fileName);
+					Session session = sessionFactory.getCurrentSession();
+					Object obj = session.save(treatmentimages);
+					session.flush();
+					session.clear();
+					if (obj != null) {
+
+						Session sessionFac = sessionFactory.getCurrentSession();
+						imageid = (Integer) sessionFac
+								.createCriteria(TreatmentImages.class)
+								.setProjection(Projections.max("imageid"))
+								.uniqueResult();
+						sessionFac.flush();
+						sessionFac.clear();
+					}
+				}
+				return imageid;
+			} catch (Exception e) {
+				e.printStackTrace();
+
+				return 0;
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * 
+	 * @param file
+	 * @param treatmentimages
+	 * @return
+	 */
+	public int saveTreatmentVideoFile(MultipartFile file,
+			TreatmentImages treatmentimages) {
+		int imageid = 0;
+		if (!file.isEmpty()) {
+			try {
+
+				System.out.println(file.getOriginalFilename());
+				System.out.println(file.getSize());
+				String fileName = commonService.saveVideoFileIntoDisk(file);
+				String thumbnailFile = commonService.generateThumnail(fileName);
+				if (fileName != null) {
+
+					// System.out.println("--thumbnailFile--------13----->"+thumbnailFile);
+					treatmentimages.setImage(fileName);
+					treatmentimages.setThumbnail(thumbnailFile);
+					Session session = sessionFactory.getCurrentSession();
+					Object obj = session.save(treatmentimages);
+					session.flush();
+					session.clear();
+					if (obj != null) {
+
+						Session sessionFac = sessionFactory.getCurrentSession();
+						imageid = (Integer) sessionFac
+								.createCriteria(TreatmentImages.class)
+								.setProjection(Projections.max("imageid"))
+								.uniqueResult();
+						sessionFac.flush();
+						sessionFac.clear();
+					}
+				}
+				return imageid;
+			} catch (Exception e) {
+				e.printStackTrace();
+
+				return 0;
+			}
+		}
+		return 0;
+	}
+
+}

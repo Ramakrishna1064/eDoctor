@@ -1,0 +1,378 @@
+package com.ensis.mediguru.service.common;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+
+import org.springframework.stereotype.Service;
+
+import com.ensis.mediguru.dto.UserNotificationDTO;
+import com.ensis.mediguru.models.NotificationBodyModel;
+import com.ensis.mediguru.models.NotificationDataModel;
+import com.ensis.mediguru.models.NotificationMessageModel;
+import com.ensis.mediguru.models.NotificationRootModel;
+import com.ensis.mediguru.utils.Constants;
+import com.ensis.mediguru.utils.MessageResources;
+import com.ensis.mediguru.utils.Utilities;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
+@Service
+public class NotifcationService extends MessageResources {
+	
+
+	/**
+	 * 
+	 * @param name
+	 * @param devicesList
+	 * @param treatmentQuestionId
+	 */
+	public void sendNewQuestionNotification(String name,
+			ArrayList<UserNotificationDTO> devicesList, int treatmentQuestionId) {
+
+		try {
+
+			NotificationMessageModel notificationQuestionModel = new NotificationMessageModel();
+			notificationQuestionModel.setMessage(getMessage(
+					"new.individual.question.posted", new Object[] { name }));
+			notificationQuestionModel.setId(treatmentQuestionId);
+
+			sendCommonNotification(notificationQuestionModel, devicesList,
+					"notification.new.treatment.alert",Constants.DOCTOR_APP);
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param name
+	 * @param devicesList
+	 * @param treatmentQuestionId
+	 */
+	public void sendAppointmnetAcceptedNotification(String name,
+			ArrayList<UserNotificationDTO> devicesList, int treatmentQuestionId) {
+
+		try {
+
+			NotificationMessageModel notificationQuestionModel = new NotificationMessageModel();
+			notificationQuestionModel.setMessage(getMessage(
+					"patient.accpted.appointment", new Object[] { name }));
+			notificationQuestionModel.setId(treatmentQuestionId);
+
+			sendCommonNotification(notificationQuestionModel, devicesList,
+					"notification.appt.accepted.alert",Constants.DOCTOR_APP);
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param name
+	 * @param devicesList
+	 * @param treatmentQuestionId
+	 */
+	public void sendCloseTreatmentNotification(String name,
+			ArrayList<UserNotificationDTO> devicesList, int treatmentQuestionId) {
+
+		try {
+
+			NotificationMessageModel notificationQuestionModel = new NotificationMessageModel();
+			notificationQuestionModel.setMessage(getMessage(
+					"patient.closed.treatment", new Object[] { name }));
+			notificationQuestionModel.setId(treatmentQuestionId);
+
+			sendCommonNotification(notificationQuestionModel, devicesList,
+					"notification.close.treatment.alert",Constants.DOCTOR_APP);
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param name
+	 * @param devicesList
+	 * @param treatmentQuestionId
+	 */
+	public void sendPhysicianSentAppointmentNotification(String name,
+			ArrayList<UserNotificationDTO> devicesList, int treatmentQuestionId) {
+
+		try {
+
+			NotificationMessageModel notificationQuestionModel = new NotificationMessageModel();
+			notificationQuestionModel.setMessage(getMessage(
+					"physician.sent.appointment", new Object[] { name }));
+			notificationQuestionModel.setId(treatmentQuestionId);
+
+			sendCommonNotification(notificationQuestionModel, devicesList,
+					"notification.new.appointment.alert",Constants.PATIENT_APP);
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param name
+	 * @param devicesList
+	 * @param treatmentQuestionId
+	 */
+	public void sendOngoingTreatmentReplyToPatientNotification(String name,
+			ArrayList<UserNotificationDTO> devicesList, int treatmentQuestionId) {
+
+		System.out.println("===name==ooo=="+name);
+		NotificationMessageModel notificationQuestionModel = new NotificationMessageModel();
+		notificationQuestionModel.setMessage(getMessage("physician.reply",
+				new Object[] { name }));
+		notificationQuestionModel.setId(treatmentQuestionId);
+		sendCommonNotification(notificationQuestionModel, devicesList,
+				"notification.ongoing.treatment.alert",Constants.PATIENT_APP);
+
+	}
+	
+	/**
+	 * 
+	 * @param name
+	 * @param devicesList
+	 * @param treatmentQuestionId
+	 */
+	public void sendPatientOngoingReplyToPhysicianNotification(String name,
+			ArrayList<UserNotificationDTO> devicesList, int treatmentQuestionId) {
+
+		System.out.println("===name====="+name);
+		NotificationMessageModel notificationQuestionModel = new NotificationMessageModel();
+		notificationQuestionModel.setMessage(getMessage("physician.reply",
+				new Object[] { name }));
+		notificationQuestionModel.setId(treatmentQuestionId);
+		sendCommonNotification(notificationQuestionModel, devicesList,
+				"notification.ongoing.treatment.alert",Constants.DOCTOR_APP);
+
+	}
+	
+	/**
+	 * 
+	 * @param patientName
+	 * @param roomUrl
+	 * @param devicesList
+	 */
+	public void sendIncomingCallNotification(int patientId,String patientName, String roomUrl,
+			ArrayList<UserNotificationDTO> devicesList){
+		
+		NotificationMessageModel notificationQuestionModel = new NotificationMessageModel();
+		/*notificationQuestionModel.setMessage(getMessage("incoming.video.call.from.title",
+				new Object[] { patientName }));*/
+		
+		notificationQuestionModel.setMessage(patientName);
+		notificationQuestionModel.setId(0);
+		notificationQuestionModel.setRoomUrl(roomUrl);
+		notificationQuestionModel.setPatientid(patientId);
+		
+		sendCommonNotification(notificationQuestionModel, devicesList,
+				"incoming.call.alert",Constants.DOCTOR_APP);
+	}
+	
+	/**
+	 * 
+	 * @param patientName
+	 * @param devicesList
+	 */
+	public void sendCallRejectedNotification(String physicianName, ArrayList<UserNotificationDTO> devicesList){
+		
+		NotificationMessageModel notificationQuestionModel = new NotificationMessageModel();
+		notificationQuestionModel.setMessage(getMessage("call.rejected.title",
+				new Object[] { physicianName }));
+		notificationQuestionModel.setId(0);
+		
+		sendCommonNotification(notificationQuestionModel, devicesList,
+				"incoming.call.rejected.alert",Constants.PATIENT_APP);
+	}
+	
+
+	/**
+	 * 
+	 * @param notificationQuestionModel
+	 * @param devicesList
+	 */
+	public void sendCommonNotification(NotificationMessageModel notificationQuestionModel,
+			ArrayList<UserNotificationDTO> devicesList, String messageKey, int appType) {
+
+		try {
+
+			System.out.println("-devices size--->"+devicesList.size());
+			
+			ArrayList<String> androidGcmList=new ArrayList<String>();
+			ArrayList<String> iOSGcmList=new ArrayList<String>();
+			
+			for (UserNotificationDTO ideviceListObject : devicesList) {
+
+				if (ideviceListObject.getDeviceType() == Constants.ANDROID_DEVICE_TYPE) {
+					androidGcmList.add(ideviceListObject.getGcmId());
+				}else if(ideviceListObject.getDeviceType() ==Constants.iOS_DEVICE_TYPE){
+					iOSGcmList.add(ideviceListObject.getGcmId());
+				}
+			}
+			
+			//Android Notification
+			if (androidGcmList.size() > 0) {
+		
+				NotificationDataModel notificationDataModel=new NotificationDataModel();
+				notificationDataModel.setNotificationType(Utilities.getInteger(getMessage(messageKey)));
+				notificationDataModel.setTreatmentQuestionId(notificationQuestionModel.getId());
+				if(notificationQuestionModel.getRoomUrl() != null){
+					notificationDataModel.setRoomUrl(notificationQuestionModel.getRoomUrl());
+				}
+				notificationDataModel.setMessage(notificationQuestionModel.getMessage());
+				
+				//Set Patient ID
+				if(notificationQuestionModel.getPatientid() != 0){
+					notificationDataModel.setPatientid(notificationQuestionModel.getPatientid());
+				}
+				
+				//Set Physician ID
+				if(notificationQuestionModel.getPhysicianid() != 0){
+					notificationDataModel.setPhysicianid(notificationQuestionModel.getPhysicianid());
+				}
+				
+				NotificationRootModel rootObj=new NotificationRootModel();
+				rootObj.setPriority("high");
+				rootObj.setRegistration_ids(androidGcmList);
+				rootObj.setData(notificationDataModel);
+								
+				ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+				String message = ow.writeValueAsString(rootObj);
+				System.out.println("---------final---android"+message);
+				
+				//Android App Keys
+				if(appType == Constants.DOCTOR_APP){
+					sendNotificationtoDevice(message,Constants.DOCTOR_APP_ANDROID_GCM_API_KEY);
+				}else if(appType == Constants.PATIENT_APP){
+					sendNotificationtoDevice(message,Constants.PATIENT_APP_ANDROID_GCM_API_KEY);
+				}				
+				
+			}
+
+			//iOS Notification
+			if (iOSGcmList.size() > 0) {
+
+				NotificationBodyModel notificationBodyModel=new NotificationBodyModel();
+				notificationBodyModel.setTitle(getMessage("appname"));
+				notificationBodyModel.setBody(notificationQuestionModel.getMessage());
+				notificationBodyModel.setSound("default");
+				
+				NotificationDataModel notificationDataModel=new NotificationDataModel();
+				notificationDataModel.setNotificationType(Utilities.getInteger(getMessage(messageKey)));
+				notificationDataModel.setTreatmentQuestionId(notificationQuestionModel.getId());
+				if(notificationQuestionModel.getRoomUrl() != null){
+					notificationDataModel.setRoomUrl(notificationQuestionModel.getRoomUrl());
+				}
+				
+				//Set Patient ID
+				if(notificationQuestionModel.getPatientid() != 0){
+					notificationDataModel.setPatientid(notificationQuestionModel.getPatientid());
+				}
+				
+				//Set Physician ID
+				if(notificationQuestionModel.getPhysicianid() != 0){
+					notificationDataModel.setPhysicianid(notificationQuestionModel.getPhysicianid());
+				}
+				
+				NotificationRootModel rootObj=new NotificationRootModel();
+				rootObj.setPriority("high");
+				rootObj.setRegistration_ids(iOSGcmList);
+				rootObj.setNotification(notificationBodyModel);
+				rootObj.setData(notificationDataModel);
+								
+				ObjectWriter ow = new ObjectMapper().writer()
+						.withDefaultPrettyPrinter();
+				String message = ow.writeValueAsString(rootObj);
+				System.out.println("-----final in ios----"+message);
+				
+				//ios App Keys
+				if(appType == Constants.DOCTOR_APP){
+					//System.out.println("--app type-->"+appType);
+					sendNotificationtoDevice(message,Constants.DOCTOR_APP_IOS_GCM_API_KEY);
+				}else if(appType == Constants.PATIENT_APP){
+					//System.out.println("--app type-->"+appType);
+					sendNotificationtoDevice(message,Constants.PATIENT_APP_IOS_GCM_API_KEY);
+				}
+				
+			}
+		
+
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+
+
+	/**
+	 * 
+	 * @param json
+	 */
+	public void sendNotificationtoDevice(String json,String apiKey) {
+
+		try {
+
+			URL obj = new URL(Constants.FCM_SERVER_URL);
+			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+			con.setRequestMethod("POST");
+			con.setRequestProperty("Content-Type", "application/json");
+			con.setRequestProperty("Authorization", "key="+apiKey);
+
+			if (json != null) {
+
+				con.setDoOutput(true);
+				OutputStream os = con.getOutputStream();
+				OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
+				osw.write(json.toString());
+				osw.flush();
+				osw.close();
+			}
+
+			int responseCode = con.getResponseCode();
+			System.out.println("POST Response Code :: " + responseCode);
+
+			if (responseCode == HttpURLConnection.HTTP_OK) { // success
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						con.getInputStream()));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+				// print result
+				System.out.println(response.toString());
+			} else {
+				System.out.println("POST request not worked");
+			}
+
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+
+	}
+}

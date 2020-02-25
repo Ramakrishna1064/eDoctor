@@ -1,0 +1,103 @@
+/**
+ * 
+ */
+package com.ensis.mediguru.service.patient;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ensis.mediguru.dao.patient.PatientChangePasswordDAO;
+import com.ensis.mediguru.dto.Users;
+import com.ensis.mediguru.models.PatientChangePasswordModel;
+import com.ensis.mediguru.models.StatusObject;
+import com.ensis.mediguru.utils.MessageResources;
+
+/**
+ * @author Venu
+ *
+ */
+@Service
+public class PatientChangePasswordService extends MessageResources{
+
+	@Autowired
+	PatientChangePasswordDAO patientChangePasswordDAO;
+
+	/**
+	 * @param patientChangePasswordDAO the patientChangePasswordDAO to set
+	 */
+	public void setPatientChangePasswordDAO(
+			PatientChangePasswordDAO patientChangePasswordDAO) {
+		this.patientChangePasswordDAO = patientChangePasswordDAO;
+	}
+	
+	/**
+	 * 
+	 * @param physicianChangePasswordModel
+	 * @return
+	 */
+	@Transactional
+	public StatusObject changePassword(PatientChangePasswordModel patientChangePasswordModel){
+		
+		StatusObject statusObject=new StatusObject();
+		if(patientChangePasswordModel != null){
+			
+			int userId=patientChangePasswordDAO.getPatientUserId(patientChangePasswordModel.getPatientid());
+			if(userId>0){
+				
+				Users userObj=patientChangePasswordDAO.getUser(userId);
+				if(userObj != null){
+					
+					if(patientChangePasswordModel.getOldPassword().equals(userObj.getPassword())){
+						
+						if (patientChangePasswordModel.getNewPassword() != null
+								&& !patientChangePasswordModel
+										.getNewPassword().equalsIgnoreCase("")) {
+							userObj.setPassword(patientChangePasswordModel
+									.getNewPassword().trim());
+							boolean status=patientChangePasswordDAO.updateUser(userObj);
+							if(status){
+								
+								statusObject.setError(false);
+								statusObject.setMessage(getMessage("password.change.success"));
+								return statusObject;
+								
+							}else{
+								statusObject.setError(true);
+								statusObject.setMessage(getMessage("password.change.failure"));
+								return statusObject;
+							}
+							
+						}else{
+							statusObject.setError(true);
+							statusObject.setMessage(getMessage("physician.new.password.empty.error"));
+							return statusObject;
+						}
+						
+					}else{
+						statusObject.setError(true);
+						statusObject.setMessage(getMessage("physician.current.password.error"));
+						return statusObject;
+					}
+					
+				}else{
+					statusObject.setError(true);
+					statusObject.setMessage(getMessage("patient.not.found"));
+					return statusObject;
+				}
+				
+			}else{
+				
+				statusObject.setError(true);
+				statusObject.setMessage(getMessage("patient.not.found"));
+				return statusObject;
+			}
+			
+		}else{
+			
+			statusObject.setError(true);
+			statusObject.setMessage(getMessage("password.change.failure"));
+			return statusObject;
+		}
+	}
+}

@@ -1,0 +1,92 @@
+/**
+ * 
+ */
+package com.ensis.mediguru.service.common;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import jdk.nashorn.internal.objects.Global;
+
+/**
+ * @author Ensis
+ *
+ */
+public class VideoThumbnailsService {
+
+	/*public static final double SECONDS_BETWEEN_FRAMES = 10;
+
+	public static String outputFilename;
+	
+	// The video stream index, used to ensure we display frames from one and
+	// only one video stream from the media container.
+	private static int mVideoStreamIndex = -1;
+
+	// Time of last frame write
+	private static long mLastPtsWrite = Global.NO_PTS;
+
+	public static final long MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
+
+	
+		public static void GenerateVideoThumbnail(String inputFilename,String outputFilename)
+		{
+
+		IMediaReader mediaReader = ToolFactory.makeReader(inputFilename);
+
+		// stipulate that we want BufferedImages created in BGR 24bit color
+		// space
+		mediaReader
+				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
+
+		ImageSnapListener.a=outputFilename;
+		mediaReader.addListener(new ImageSnapListener());
+
+		// read out the contents of the media file and
+		// dispatch events to the attached listener
+		while (mediaReader.readPacket() == null)
+			;
+		}
+	
+
+	private static class ImageSnapListener extends MediaListenerAdapter {
+
+		public static String a;
+		public void onVideoPicture(IVideoPictureEvent event) {
+
+			if (event.getStreamIndex() != mVideoStreamIndex) {
+				// if the selected video stream id is not yet set, go ahead an
+				// select this lucky video stream
+				if (mVideoStreamIndex == -1)
+					mVideoStreamIndex = event.getStreamIndex();
+				// no need to show frames from this video stream
+				else
+					return;
+			}
+
+			// if uninitialized, back date mLastPtsWrite to get the very first
+			// frame
+			if (mLastPtsWrite == Global.NO_PTS)
+				mLastPtsWrite = event.getTimeStamp()
+						- MICRO_SECONDS_BETWEEN_FRAMES;
+
+			// if it's time to write the next frame
+			if (event.getTimeStamp() - mLastPtsWrite >= MICRO_SECONDS_BETWEEN_FRAMES) {
+
+				//String outputFilename = dumpImageToFile(event.getImage());
+				
+				try {
+					ImageIO.write(event.getImage(), "jpeg", new File(a));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				// indicate file written
+				
+			}
+
+		}
+	}*/
+}
